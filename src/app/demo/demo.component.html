@@ -1,0 +1,64 @@
+<h2>Local State Modification</h2>
+<p>
+  When you need to select from the store and update a value locally inside a
+  component.
+</p>
+
+<hr />
+<h3>Example:</h3>
+<span style="display: block; padding-bottom: 20px">
+  Current state: {{ localState | json }}
+</span>
+
+<span style="display: block; padding-bottom: 20px">
+  Current state: {{ age$ | async }}
+</span>
+
+<button (click)="updateLocalState()">Update</button>
+
+<hr />
+
+<h3>Explanation of 'Local State Modification' Bug</h3>
+
+<p>
+  By create an object that directly references the ngrx store's state, you will
+  interfere with ngrx's change detection.
+</p>
+
+<p>
+  When you update the value of the reference locally, ngrx will not know that
+  any changes has occurred and bugs will appear.
+</p>
+
+<p>
+  So by setting a local reference to the state we are creating a direct
+  reference to the ngrx store's state:
+</p>
+
+<pre
+  [innerHTML]="
+    'constructor(private store: Store<State>) { \n    store.pipe(select((state: State) => state.demo.person))\n       .subscribe(p => (this.localState = p)); \n}'
+  "
+></pre>
+
+<p>
+  If we press the <button (click)="updateLocalState()">Update</button> button we
+  will in this component change the value of what the local variable points to.
+  However, since our <code>localState</code> variable is a reference to the ngrx
+  state's person object, our update will (contrary to what we might think) not
+  be local.
+</p>
+
+<p>
+  By keeping a reference to the ngrx state, and breaking the immutability
+  requirement of ngrx, we circumvent ngrx's change detection and introduce a
+  bug.
+</p>
+
+<h3>Solution</h3>
+
+<p>
+  When we need a local copy of a value from the store, we should make a deep
+  copy, via <code [innerHTML]="'map(x => _.cloneDeep(x))'"> </code> using lodash for example, or if it's
+  a shallow copy will suffice using <code [innerHTML]="'map(x => {...x})'"></code>.
+</p>
