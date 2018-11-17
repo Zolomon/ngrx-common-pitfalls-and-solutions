@@ -1,4 +1,11 @@
-# NgrxDemo
+
+
+
+# Common pitfalls and solutions for [NgRx](https://ngrx.io)
+
+Here I have tried to collect and visualise common pitfalls and solutions for NgRx as I have come across through working with NgRx myself or with others.
+
+1. Local State Modification with a direct reference to Ngrx state.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.0.4.
 
